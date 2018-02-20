@@ -6,15 +6,17 @@
 // rectangle contains 2 * L cells at min and H cells max,
 // L cells with Mushrooms and L cells with Tomatoes
 // and all cells must be "clear"(no slice contains any of the cells)
+#include <iostream>
+using std::cout;
 bool Pizza::CheckRectangle(const Coord &s, const Coord &e)
 {
 	bool flag = false;
 	int qT = 0, qM = 0;
-	int qCells = (e.x - s.x) * (e.y - s.y);
+	int qCells = (e.x + 1 - s.x) * (e.y + 1 - s.y);
 	const pair<Ingredient, bool> *it;
 
 	// check quantity of cells
-	if (qCells <= 2 * L_ || qCells >= H_)
+	if (qCells < 2 * L_ || qCells > H_)
 	{
 		return flag;
 	}
@@ -51,7 +53,7 @@ bool Pizza::CheckRectangle(const Coord &s, const Coord &e)
 }
 
 // tries to cut rectangle(slice) with previous check
-bool Pizza::CutSlice(const Coord &s, const Coord &e)
+bool Pizza::TryCutSlice(const Coord &s, const Coord &e)
 {
 	bool flag = CheckRectangle(s, e);
 	if (flag)
@@ -69,19 +71,53 @@ bool Pizza::CutSlice(const Coord &s, const Coord &e)
 	return flag;
 }
 
-void Pizza::cut(int k)
+// Simple try ^_^
+// zero step is to cut H so it is an even number
+// firstly try to cut horizontal rectangle k x H / k
+// if attempt fails - try to cut vertically
+// if attempt fails - increase k
+// if k reaches value of H or > - ??(means that all previous attempts failed)
+// if attempt succeeds - cut new slices below and on the right side
+void Pizza::Cut(int k, Coord st)
 {
 	int R = pizza_.size(), C = pizza_.at(0).size();
-	if (R < H_ || C < H_)
+	int local_h = H_;
+	Coord s(0, 0), e(0, 0);
+	queue<Coord> starts;
+
+	starts.push(Coord(st.x, st.y));
+
+	if (H_ % 2 != 0)
 	{
-		// k++ ?
+		local_h = H_ - 1;
 	}
-	int sY = 0, sX = 0;
-	// try to cut slice as k x H/k
-	
+
+	while (!starts.empty())
+	{
+		s = starts.front();
+		k = 1;
+		starts.pop();
+
+		bool cut_flag = false;
+		while (k <= local_h && !cut_flag)
+		{
+			local_h /= k;
+			e.x = s.x + local_h - 1;
+			e.y = s.y + k - 1;
+		
+			cut_flag = TryCutSlice(s, e);
+			k++;
+		}
+		if (k >= local_h && !cut_flag)
+		{
+			// ??
+		}
+		starts.push(Coord(s.x, e.y + 1));
+		starts.push(Coord(e.x + 1, s.y));
+	}
 }
 
-void Pizza::show(std::ostream & out)
+void Pizza::ShowPizza(std::ostream & out)
 {
 	for (auto line : pizza_)
 	{
@@ -98,5 +134,13 @@ void Pizza::show(std::ostream & out)
 			}
 		}
 		out << "\n";
+	}
+}
+
+void Pizza::ShowSlices(std::ostream & out)
+{
+	for (auto slice : slices_)
+	{
+		out << slice.first.x << " " << slice.second.y << "\t" << slice.second.x << " " << slice.second.y << "\n";
 	}
 }
