@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <utility>
+#include <ostream>
 
 using std::vector;
 using std::pair;
@@ -16,16 +17,18 @@ struct Coord
 
 class Pizza
 {
-	bool check(Coord s, Coord e);
+	bool CheckRectangle(const Coord &s, const Coord &e);
+	bool CutSlice(const Coord &s, const Coord &e);
 public:
-	Pizza(vector<vector<pair<Ingredient, bool>>> ipizza) : pizza_(ipizza) {};
+	Pizza(vector<vector<pair<Ingredient, bool>>> ipizza, int iL, int iH) : pizza_(ipizza), L_(iL), H_(iH) {};
 	~Pizza() {};
 
 	void cut(int k);
+	void show(std::ostream &out);
 private:
 
 	vector<vector<pair<Ingredient, bool>>>pizza_;
-	vector<pair<int, int>> slices_;
+	vector<pair<Coord, Coord>> slices_;
 	int L_, H_;
 };
 
