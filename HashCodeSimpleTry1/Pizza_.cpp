@@ -107,17 +107,12 @@ bool Pizza::TryCutSlice(const Coord &s, const Coord &e)
 void Pizza::Cut(int factoriz_index, Coord st)
 {
 	int R = pizza_.size(), C = pizza_.at(0).size();
-	int local_h = H_;
+	int local_h = H_, k = 1;
 	Coord s(0, 0), e(0, 0);
 	queue<Coord> starts;
 	vector<int> H_factoriz = MNumber(H_).GetDecomposition();
 
 	starts.push(Coord(st.x, st.y));
-
-	if (H_ % 2 != 0)
-	{
-		local_h = H_ - 1;
-	}
 
 	while (!starts.empty())
 	{
@@ -128,9 +123,9 @@ void Pizza::Cut(int factoriz_index, Coord st)
 		starts.pop();
 
 		bool cut_flag = false;
-		while (factoriz_index <= local_h && !cut_flag)
+		while (k <= local_h && !cut_flag)
 		{
-			int k = H_factoriz.at(factoriz_index);
+			k = H_factoriz.at(factoriz_index);
 
 			local_h /= k;
 			e.x = s.x + local_h - 1;
@@ -139,7 +134,7 @@ void Pizza::Cut(int factoriz_index, Coord st)
 			cut_flag = TryCutSlice(s, e);
 			factoriz_index++;
 		}
-		if (factoriz_index >= local_h && !cut_flag)
+		if (k >= local_h && !cut_flag)
 		{
 			// ??
 		}
