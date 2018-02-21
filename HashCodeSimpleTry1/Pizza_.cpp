@@ -1,6 +1,27 @@
 #include "stdafx.h"
 #include "Pizza_.h"
 
+
+bool Pizza::CheckCoordinates(const Coord s, const Coord e)
+{
+	const int R = pizza_.size(), C = pizza_.at(0).size();
+
+	//check whether s and e are within pizza rectangle
+	if (s.x < 0 || s.y < 0 || e.x < 0 || e.y < 0 ||
+		s.x >= C || s.y >= R || e.x >= C || e.y >= R)
+	{
+		return false;
+	}
+
+	//check whether s is really left-top point
+	if (s.x > e.x || s.y > e.y)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 // rectangle is defined with top-left coordinate (s) and bootom right coordinate (e)
 // returns true if :
 // rectangle contains 2 * L cells at min and H cells max,
@@ -14,6 +35,12 @@ bool Pizza::CheckRectangle(const Coord &s, const Coord &e)
 	int qT = 0, qM = 0;
 	int qCells = (e.x + 1 - s.x) * (e.y + 1 - s.y);
 	const pair<Ingredient, bool> *it;
+	const int R = pizza_.size(), C = pizza_.at(0).size();
+
+	if (!CheckCoordinates(s, e))
+	{
+		return flag;
+	}
 
 	// check quantity of cells
 	if (qCells < 2 * L_ || qCells > H_)
@@ -74,16 +101,16 @@ bool Pizza::TryCutSlice(const Coord &s, const Coord &e)
 // Simple try ^_^
 // zero step is to cut H so it is an even number
 // firstly try to cut horizontal rectangle k x H / k
-// if attempt fails - try to cut vertically
 // if attempt fails - increase k
-// if k reaches value of H or > - ??(means that all previous attempts failed)
+// if k reaches value greater than H - ??(means that all previous attempts failed)
 // if attempt succeeds - cut new slices below and on the right side
-void Pizza::Cut(int k, Coord st)
+void Pizza::Cut(int factoriz_index, Coord st)
 {
 	int R = pizza_.size(), C = pizza_.at(0).size();
 	int local_h = H_;
 	Coord s(0, 0), e(0, 0);
 	queue<Coord> starts;
+	vector<int> H_factoriz = MNumber(H_).GetDecomposition();
 
 	starts.push(Coord(st.x, st.y));
 
@@ -94,26 +121,37 @@ void Pizza::Cut(int k, Coord st)
 
 	while (!starts.empty())
 	{
+		local_h = H_;
 		s = starts.front();
-		k = 1;
+		factoriz_index = 0;
+
 		starts.pop();
 
 		bool cut_flag = false;
-		while (k <= local_h && !cut_flag)
+		while (factoriz_index <= local_h && !cut_flag)
 		{
+			int k = H_factoriz.at(factoriz_index);
+
 			local_h /= k;
 			e.x = s.x + local_h - 1;
 			e.y = s.y + k - 1;
-		
+
 			cut_flag = TryCutSlice(s, e);
-			k++;
+			factoriz_index++;
 		}
-		if (k >= local_h && !cut_flag)
+		if (factoriz_index >= local_h && !cut_flag)
 		{
 			// ??
 		}
-		starts.push(Coord(s.x, e.y + 1));
-		starts.push(Coord(e.x + 1, s.y));
+
+		if (CheckCoordinates(Coord(s.x, e.y + 1), Coord(s.x + H_ - 1, e.y + 1)))
+		{
+			starts.push(Coord(s.x, e.y + 1));
+		}
+		if (CheckCoordinates(Coord(e.x + H_, s.y), Coord(e.x + H_, s.y)))
+		{
+			starts.push(Coord(e.x + 1, s.y));
+		}
 	}
 }
 

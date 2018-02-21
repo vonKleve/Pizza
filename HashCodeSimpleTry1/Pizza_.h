@@ -5,6 +5,7 @@
 #include <ostream>
 #include <queue>
 #include <string>
+#include "MNumber.h"
 
 using std::vector;
 using std::pair;
@@ -20,13 +21,16 @@ struct Coord
 
 class Pizza
 {
+	bool CheckCoordinates(const Coord s, const Coord e);
 	bool CheckRectangle(const Coord &s, const Coord &e);
 	bool TryCutSlice(const Coord &s, const Coord &e);
+	
 public:
 	Pizza(vector<vector<pair<Ingredient, bool>>> ipizza, int iL, int iH) : pizza_(ipizza), L_(iL), H_(iH) {};
 	Pizza(vector<std::string> ipizza, int iL, int iH) : L_(iL), H_(iH) 
 	{
 		int i = 0;
+		pizza_.resize(ipizza.size());
 		for (auto line : ipizza)
 		{
 			for (auto cell : line)
