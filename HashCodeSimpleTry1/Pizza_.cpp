@@ -148,7 +148,7 @@ void Pizza::Cut(int factoriz_index, Coord st)
 		{
 			starts.push(Coord(s.x, e.y + 1));
 		}
-		if (CheckCoordinates(Coord(e.x + H_, s.y), Coord(e.x + H_, s.y)))
+		if (CheckCoordinates(Coord(e.x + 1, s.y), Coord(e.x + H_, s.y)))
 		{
 			starts.push(Coord(e.x + 1, s.y));
 		}
