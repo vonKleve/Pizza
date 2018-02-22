@@ -2,7 +2,7 @@
 #include "Pizza_.h"
 
 
-bool Pizza::CheckCoordinates(const Coord s, const Coord e)
+bool Pizza::CheckCoordinates(const Coord & s, const Coord & e)
 {
 	const int R = pizza_.size(), C = pizza_.at(0).size();
 
@@ -56,37 +56,18 @@ unsigned int Pizza::CalculateComponent(const Coord & s, const Coord & e, Ingredi
 using std::cout;
 bool Pizza::CheckRectangle(const Coord &s, const Coord &e)
 {
-	bool flag = false, reached_cell = false;
-	int qT = 0, qM = 0;
-	int qCells;
-	const int R = pizza_.size(), C = pizza_.at(0).size();
+	bool reached_cell = false;
+	const int qT = CalculateComponent(s, e, Ingredient::Tomato, reached_cell),
+		qM = CalculateComponent(s, e, Ingredient::Mushroom, reached_cell),
+		qCells = (e.x + 1 - s.x) * (e.y + 1 - s.y),
+		R = pizza_.size(),
+		C = pizza_.at(0).size();
 
-	if (!CheckCoordinates(s, e))
+	if (!CheckCoordinates(s, e) || qCells < 2 * L_ || qCells > H_ || reached_cell || qT < L_ || qM < L_)
 	{
-		return flag;
+		return false;
 	}
-
-	qCells = (e.x + 1 - s.x) * (e.y + 1 - s.y);
-	// check quantity of cells
-	if (qCells < 2 * L_ || qCells > H_)
-	{
-		return flag;
-	}
-
-	qT = CalculateComponent(s, e, Ingredient::Tomato, reached_cell);
-	qM = CalculateComponent(s, e, Ingredient::Mushroom, reached_cell);
-
-	if (reached_cell)
-	{
-		return flag;
-	}
-
-	// if quantity of Mushrooms and Tomatoes is more than enough
-	if (qT >= L_ && qM >= L_)
-	{
-		flag = true;
-	}
-	return flag;
+	return true;
 }
 
 // tries to cut rectangle(slice) with previous check
