@@ -26,8 +26,8 @@ struct Coord
 class Pizza
 {
 	bool CheckCoordinates(const Coord & s, const Coord & e);
-	bool CheckRectangle(const Coord &s, const Coord &e);
-	bool TryCutSlice(Coord &s, Coord &e);
+	bool CheckSlice(const Coord &s, const Coord &e);
+	bool TryCutSlice(const Coord &s, const Coord &e);
 	unsigned int CalculateComponent(const Coord &s, const Coord &e, Ingredient comp, bool &flag);
 
 public:
@@ -65,7 +65,7 @@ public:
 	};
 	~Pizza() {};
 
-	void Cut(int k, Coord st);
+	void Cut(Coord st);
 	void ShowPizza(std::ostream &out);
 	void ShowSlices(std::ostream &out);
 private:
