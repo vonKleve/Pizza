@@ -17,14 +17,19 @@ struct Coord
 {
 	int x, y;
 	Coord(int ix, int iy) : x(ix), y(iy) {};
+	std::string ToString()
+	{
+		return std::to_string(x) + " " + std::to_string(y);
+	}
 };
 
 class Pizza
 {
 	bool CheckCoordinates(const Coord s, const Coord e);
 	bool CheckRectangle(const Coord &s, const Coord &e);
-	bool TryCutSlice(const Coord &s, const Coord &e);
-	
+	bool TryCutSlice(Coord &s, Coord &e);
+	unsigned int CalculateComponent(const Coord &s, const Coord &e, Ingredient comp, bool &flag);
+
 public:
 	Pizza(vector<vector<pair<Ingredient, bool>>> ipizza, int iL, int iH) : pizza_(ipizza), L_(iL), H_(iH) {};
 	Pizza(vector<std::string> ipizza, int iL, int iH) : L_(iL), H_(iH) 

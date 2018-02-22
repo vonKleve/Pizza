@@ -1,6 +1,6 @@
 ﻿  Pizza_.cpp
-c:\users\dell\source\repos\hashcodesimpletry1\hashcodesimpletry1\pizza_.cpp(51): warning C4018: '<=': signed/unsigned mismatch
-c:\users\dell\source\repos\hashcodesimpletry1\hashcodesimpletry1\pizza_.cpp(53): warning C4018: '<=': signed/unsigned mismatch
-c:\users\dell\source\repos\hashcodesimpletry1\hashcodesimpletry1\pizza_.cpp(88): warning C4018: '<=': signed/unsigned mismatch
-c:\users\dell\source\repos\hashcodesimpletry1\hashcodesimpletry1\pizza_.cpp(90): warning C4018: '<=': signed/unsigned mismatch
+c:\users\dell\source\repos\hashcodesimpletry1\hashcodesimpletry1\pizza_.cpp(96): warning C4018: '<': signed/unsigned mismatch
+c:\users\dell\source\repos\hashcodesimpletry1\hashcodesimpletry1\pizza_.cpp(97): warning C4018: '<': signed/unsigned mismatch
+c:\users\dell\source\repos\hashcodesimpletry1\hashcodesimpletry1\pizza_.cpp(102): warning C4018: '<': signed/unsigned mismatch
+c:\users\dell\source\repos\hashcodesimpletry1\hashcodesimpletry1\pizza_.cpp(104): warning C4018: '<': signed/unsigned mismatch
   HashCodeSimpleTry1.vcxproj -> C:\Users\Dell\source\repos\HashCodeSimpleTry1\Debug\HashCodeSimpleTry1.exe

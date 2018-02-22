@@ -8,7 +8,7 @@ bool Pizza::CheckCoordinates(const Coord s, const Coord e)
 
 	//check whether s and e are within pizza rectangle
 	if (s.x < 0 || s.y < 0 || e.x < 0 || e.y < 0 ||
-		s.x >= C || s.y >= R || e.x >= C || e.y >= R)
+		s.x >= C || s.y >= R )
 	{
 		return false;
 	}
@@ -22,6 +22,31 @@ bool Pizza::CheckCoordinates(const Coord s, const Coord e)
 	return true;
 }
 
+unsigned int Pizza::CalculateComponent(const Coord & s, const Coord & e, Ingredient comp, bool &flag)
+{
+	unsigned int result = 0;
+	pair<Ingredient, bool> *it;
+	for (int i = s.y; i <= e.y; i++)
+	{
+		for (int j = s.x; j <= e.x; j++)
+		{
+			it = &pizza_.at(i).at(j);
+
+			// if reached slice - set flag
+			if ((*it).second)
+			{
+				flag = true;
+			}
+
+			if (comp == (*it).first)
+			{
+				result++;
+			}
+		}
+	}
+	return result;
+}
+
 // rectangle is defined with top-left coordinate (s) and bootom right coordinate (e)
 // returns true if :
 // rectangle contains 2 * L cells at min and H cells max,
@@ -31,10 +56,9 @@ bool Pizza::CheckCoordinates(const Coord s, const Coord e)
 using std::cout;
 bool Pizza::CheckRectangle(const Coord &s, const Coord &e)
 {
-	bool flag = false;
+	bool flag = false, reached_cell = false;
 	int qT = 0, qM = 0;
-	int qCells = (e.x + 1 - s.x) * (e.y + 1 - s.y);
-	const pair<Ingredient, bool> *it;
+	int qCells;
 	const int R = pizza_.size(), C = pizza_.at(0).size();
 
 	if (!CheckCoordinates(s, e))
@@ -42,33 +66,19 @@ bool Pizza::CheckRectangle(const Coord &s, const Coord &e)
 		return flag;
 	}
 
+	qCells = (e.x + 1 - s.x) * (e.y + 1 - s.y);
 	// check quantity of cells
 	if (qCells < 2 * L_ || qCells > H_)
 	{
 		return flag;
 	}
-	// check every cell and calc qT and qM
-	for (int i = s.y; i <= e.y && i <= pizza_.size(); i++)
+
+	qT = CalculateComponent(s, e, Ingredient::Tomato, reached_cell);
+	qM = CalculateComponent(s, e, Ingredient::Mushroom, reached_cell);
+
+	if (reached_cell)
 	{
-		for (int j = s.x; j != e.x && j <= pizza_.at(0).size(); j++)
-		{
-			it = &pizza_.at(i).at(j);
-			// if reached slice then return false
-			if ((*it).second)
-			{
-				return flag;
-			}
-			// depending on the Ingredient increase qT or qM
-			switch ((*it).first)
-			{
-			case(Ingredient::Mushroom):
-				qM++;
-				break;
-			case(Ingredient::Tomato):
-				qT++;
-				break;
-			}
-		}
+		return flag;
 	}
 
 	// if quantity of Mushrooms and Tomatoes is more than enough
@@ -80,14 +90,18 @@ bool Pizza::CheckRectangle(const Coord &s, const Coord &e)
 }
 
 // tries to cut rectangle(slice) with previous check
-bool Pizza::TryCutSlice(const Coord &s, const Coord &e)
+bool Pizza::TryCutSlice(Coord &s, Coord &e)
 {
+	// adjust end coordinates
+	e.x = e.x < pizza_.at(0).size() ? e.x : (pizza_.at(0).size() - 1);
+	e.y = e.y < pizza_.size() ? e.y : (pizza_.size() - 1);
+
 	bool flag = CheckRectangle(s, e);
 	if (flag)
 	{
-		for (int i = s.y; i <= e.y && i <= pizza_.size(); i++)
+		for (int i = s.y; i <= e.y && i < pizza_.size(); i++)
 		{
-			for (int j = s.x; j != e.x && j <= pizza_.at(0).size(); j++)
+			for (int j = s.x; j != e.x && j < pizza_.at(0).size(); j++)
 			{
 				// mark every cell in rectangle
 				pizza_.at(i).at(j).second = true;
@@ -97,6 +111,8 @@ bool Pizza::TryCutSlice(const Coord &s, const Coord &e)
 	}
 	return flag;
 }
+
+
 
 // Simple try ^_^
 // zero step is to cut H so it is an even number
@@ -174,6 +190,6 @@ void Pizza::ShowSlices(std::ostream & out)
 {
 	for (auto slice : slices_)
 	{
-		out << slice.first.x << " " << slice.second.y << "\t" << slice.second.x << " " << slice.second.y << "\n";
+		out << slice.first.ToString() << "\t" << slice.second.ToString() << "\n";
 	}
 }
